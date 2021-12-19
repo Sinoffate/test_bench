@@ -113,8 +113,8 @@ int meme_release(struct inode* inode, struct file* file) {
 
 static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff_t* offset) {
 
-	uint8_t* data = "Hello world!\n";
-	size_t datalen = strlen(data);
+	static const char world[] = "Hello world!\n";
+	size_t datalen = sizeof(world) - 1;
 
 	printk("Reading device: %d\n", MINOR(file->f_path.dentry->d_inode->i_rdev));
 
@@ -128,7 +128,7 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff
 		return -EFAULT;
 	}
 
-	return datalen;
+	return count;
 }
 
 module_init(meme_start);
