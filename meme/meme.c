@@ -128,7 +128,7 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff
 		return -EFAULT;
 	}*/
 
-	return 0;
+	return datalen;
 }
 
 module_init(meme_start);
