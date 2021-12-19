@@ -17,7 +17,7 @@ static int __init meme_start(void) {
 
 // cleanup function
 static void __exit meme_end(void) {
-	printk(KERN_INFO "Cya Lata!")
+	printk(KERN_INFO "Cya Lata!");
 
 }
 
