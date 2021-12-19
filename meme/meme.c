@@ -123,10 +123,10 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff
 		count = datalen;
 	}
 
-	if (copy_to_user(buf, world[], count)) {
+	/*if (copy_to_user(buf, world[], count)) {
 
 		return -EFAULT;
-	}
+	}*/
 
 	return count;
 }
