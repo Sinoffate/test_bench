@@ -19,7 +19,7 @@ MODULE_INFO(version, "0.2");
 
 #define MAX_DEV 1
 
-
+// prototypes
 static int meme_open(struct inode* inode, struct file* file);
 static int meme_release(struct inode* inode, struct file* file);
 static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff_t* offset);
@@ -113,8 +113,8 @@ int meme_release(struct inode* inode, struct file* file) {
 
 static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff_t* offset) {
 
-	static const char world[] = "Hello world!\n";
-	size_t datalen = sizeof(world) - 1;
+	uint8_t* data = "Hello world!\n";
+	size_t datalen = sizeof(data) - 1;
 
 	printk("Reading device: %d\n", MINOR(file->f_path.dentry->d_inode->i_rdev));
 
@@ -123,12 +123,12 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff
 		count = datalen;
 	}
 
-	/*if (copy_to_user(buf, world[], count)) {
+	if (copy_to_user(buf, data, count)) {
 
 		return -EFAULT;
-	}*/
+	}
 
-	return datalen;
+	return count;
 }
 
 module_init(meme_start);
