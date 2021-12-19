@@ -1,0 +1,20 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-meme",
+      "appliesTo": "dev_DriverStack/meme.c",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-meme",
+      "appliesTo": "meme/meme.vcxproj",
+      "type": "msbuild"
+    },
+    {
+      "taskLabel": "task-meme",
+      "appliesTo": "meme/meme.c",
+      "type": "launch"
+    }
+  ]
+}

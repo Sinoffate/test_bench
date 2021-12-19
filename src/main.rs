@@ -31,7 +31,7 @@ fn main() {
         .read(true)
         .write(true)
         .open(path)
-        .expect("clouldn't open driver path");
+        .expect("couldn't open driver path");
 
     let mut output = String::new();
     driver_fd.read_to_string(&mut output).unwrap();
