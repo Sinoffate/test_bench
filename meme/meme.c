@@ -5,10 +5,6 @@
  * 
  */
 
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Jered Wiegel");
-MODULE_INFO(version, "0.2");
-
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -17,6 +13,9 @@ MODULE_INFO(version, "0.2");
 #include <linux/uaccess.h>
 #include <linux/fs.h>
 
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Jered Wiegel");
+MODULE_INFO(version, "0.2");
 
 #define MAX_DEV 1
 
