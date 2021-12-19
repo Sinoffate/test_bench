@@ -43,7 +43,7 @@ static int dev_major = 0;
 static struct class *meme_class = NULL;
 
 // array of meme_device_data for
-static struct mem_device_data meme_data[MAX_DEV];
+static struct meme_device_data meme_data[MAX_DEV];
 
 
 static int meme_uevent(struct device* dev, struct kobj_uevent_env* env) {
@@ -99,12 +99,12 @@ static void __exit meme_end(void) {
 }
 
 
-int meme_open(inode* inode, file* file) {
+int meme_open(struct inode* inode, struct file* file) {
 	return 0;
 }
 
 
-int meme_release(inode* inode, file* file) {
+int meme_release(struct inode* inode, struct file* file) {
 	return 0;
 }
 
