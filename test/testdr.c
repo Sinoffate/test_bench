@@ -53,6 +53,14 @@ static struct file_operations fops =
         .release = etx_release,
 };
 
+
+
+static int etx_uevent(struct device* dev, struct kobj_uevent_env* env) {
+
+    add_uevent_var(env, "DEVMODE=%#o", 0666);
+    return 0;
+}
+
 /*
 ** This function will be called when we open the Device file
 */
@@ -147,6 +155,7 @@ static int __init etx_driver_init(void)
         pr_err("Cannot create the Device 1\n");
         goto r_device;
     }
+    dev_class->dev_uevent = etx_uevent;
     pr_info("Device Driver Insert...Done!!!\n");
     return 0;
 
