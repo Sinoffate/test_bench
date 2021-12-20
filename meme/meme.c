@@ -111,7 +111,7 @@ static int meme_release(struct inode* inode, struct file* file) {
 	return 0;
 }
 
-static ssize_t meme_read(struct file* file, char __user* buf, size_t len, loff_t* offset) {
+static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff_t* offset) {
 
 	uint8_t* data = "Hello world!\n";
 	size_t datalen = strlen(data);
