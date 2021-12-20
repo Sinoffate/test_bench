@@ -123,7 +123,7 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t len, loff_t
 		return -EFAULT;
 	}
 
-	if (*offset == 0) {
+	if (*offset > 0) {
 
 		return 0;;
 	}
