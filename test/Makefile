@@ -1,10 +1,7 @@
-obj-m += driver.o
+obj-m += testdr.o
  
-KDIR = /lib/modules/$(shell uname -r)/build
- 
- 
-all:
-  make -C $(KDIR)M=$(shell pwd) modules
- 
+all: 
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+
 clean:
-  make -C $(KDIR)M=$(shell pwd) clean
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
