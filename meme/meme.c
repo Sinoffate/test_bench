@@ -103,7 +103,6 @@ static void __exit meme_end(void) {
 
 
 static int meme_open(struct inode* inode, struct file* file) {
-
 	return 0;
 }
 
@@ -112,17 +111,9 @@ static int meme_release(struct inode* inode, struct file* file) {
 	return 0;
 }
 
-static ssize_t meme_read(struct file* file, char __user* buf, ssize_t len, loff_t* offset) {
+static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff_t* offset) {
 
-	struct meme_device_data* data = "Hello world!\n";
-	ssize_t len = min(data->size - *offset, size);
-
-	if (len <= 0)
-		return 0;
-
-
-
-	/*uint8_t* data = "Hello world!\n";
+	uint8_t* data = "Hello world!\n";
 	size_t datalen = strlen(data);
 
 	printk("Reading device: %d\n", MINOR(file->f_path.dentry->d_inode->i_rdev));
@@ -130,14 +121,14 @@ static ssize_t meme_read(struct file* file, char __user* buf, ssize_t len, loff_
 	if (count > datalen) {
 
 		count = datalen;
-	}*/
+	}
 
-	if (copy_to_user(buf, data->buf, len)) {
+	if (copy_to_user(buf, data, count)) {
+
 		return -EFAULT;
 	}
 
-	*offset += len;
-	return len;
+	return count;
 }
 
 module_init(meme_start);
