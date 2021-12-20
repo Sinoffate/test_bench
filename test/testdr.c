@@ -155,7 +155,7 @@ static int __init etx_driver_init(void)
         pr_err("Cannot create the Device 1\n");
         goto r_device;
     }
-    dev_class->dev_uevent = etx_uevent;
+    etx_class->dev_uevent = etx_uevent;
     pr_info("Device Driver Insert...Done!!!\n");
     return 0;
 
