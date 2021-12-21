@@ -118,14 +118,14 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff
 
 	printk("Reading device: %d\n", MINOR(file->f_path.dentry->d_inode->i_rdev));
 
-	if (copy_to_user(buf, data, count)) {
-
-		return -EFAULT;
-	}
-
 	if (*offset > 0) {
 
 		return 0;
+	}
+
+	if (copy_to_user(buf, data, count)) {
+
+		return -EFAULT;
 	}
 
 	return datalen;
