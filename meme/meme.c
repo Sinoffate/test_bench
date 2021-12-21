@@ -12,6 +12,7 @@
 #include <linux/cdev.h>
 #include <linux/uaccess.h>
 #include <linux/fs.h>
+#include <asm/errno.h>
 
 
 MODULE_LICENSE("GPL");
@@ -126,7 +127,7 @@ static int meme_open(struct inode* inode, struct file* file) {
 	Device_Open++;
 	sprintf(msg, "Hello world!\n", counter++);
 	msg_Ptr = msg;
-	MOD_INC_USE_COUNT;
+	
 
 	return 0;
 }
@@ -136,7 +137,6 @@ static int meme_release(struct inode* inode, struct file* file) {
 	printk("Device Released\n");
 
 	Device_Open--;
-	MOD_DEC_USE_COUNT;
 
 	return 0;
 }
