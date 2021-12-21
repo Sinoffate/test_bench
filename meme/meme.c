@@ -18,12 +18,13 @@ MODULE_AUTHOR("Jered Wiegel");
 MODULE_INFO(version, "0.2");
 
 #define MAX_DEV 1
+#define BUF_LEN 80;
 
 // prototypes
 static int meme_open(struct inode* inode, struct file* file);
 static int meme_release(struct inode* inode, struct file* file);
 static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset);
-static ssize_t meme_write(struct file* file, char __user* buf, size_t SIZE, loff_t* offset);
+static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE, loff_t* offset);
 
 // initialize file_operations
 static const struct file_operations meme_fops = {
@@ -115,11 +116,11 @@ static int meme_open(struct inode* inode, struct file* file) {
 
 	static int counter = 0;
 
-	if (Device_open) return -EBUSY;
+	if (Device_Open) return -EBUSY;
 
 	Device_Open++;
 	sprintf(msg, "Hello world!\n", counter++);
-
+	msg_Ptr = msg;
 	MOD_INC_USE_COUNT;
 
 	return 0;
@@ -153,11 +154,11 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_
 }
 
 // Write Function
-static ssize_t meme_write(struct file* file, char __user* buf, size_t SIZE, loff_t* offset) {
+static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE, loff_t* offset) {
 	printk("Device Write Called\n");
 
-
-	return 0;
+	printk("Function not supported by this driver.")
+	return -EINVAL;
 }
 
 module_init(meme_start);
