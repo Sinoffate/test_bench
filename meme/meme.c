@@ -22,7 +22,8 @@ MODULE_INFO(version, "0.2");
 // prototypes
 static int meme_open(struct inode* inode, struct file* file);
 static int meme_release(struct inode* inode, struct file* file);
-static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff_t* offset);
+static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset);
+static ssize_t meme_write(struct file* file, char __user* buf, size_t SIZE, loff_t* offset);
 
 // initialize file_operations
 static const struct file_operations meme_fops = {
@@ -31,6 +32,7 @@ static const struct file_operations meme_fops = {
 	.open		= meme_open,
 	.release	= meme_release,
 	.read		= meme_read,
+	.write		= meme_write,
 
 };
 
@@ -48,7 +50,7 @@ static struct class *meme_class = NULL;
 // array of meme_device_data for
 static struct meme_device_data meme_data[MAX_DEV];
 
-
+// sets permissions to all for user to interact with driver
 static int meme_uevent(struct device* dev, struct kobj_uevent_env* env) {
 
 	add_uevent_var(env, "DEVMODE=%#o", 0666);
@@ -101,34 +103,40 @@ static void __exit meme_end(void) {
 	unregister_chrdev_region(MKDEV(dev_major, 0), MINORMASK);
 }
 
-
+// Open Function
 static int meme_open(struct inode* inode, struct file* file) {
+	printk(KERN_INFO, "Device Opened\n");
 	return 0;
 }
 
-
+// Release Function
 static int meme_release(struct inode* inode, struct file* file) {
+	printk(KERN_INFO, "Device Released\n");
 	return 0;
 }
+// Read Function
+static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset) {
+	
+	int bytes_read = 0;
 
-static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff_t* offset) {
+	printk(KERN_INFO, "Device Read Called\n");
 
-	uint8_t* data = "Hello world!\n";
-	size_t datalen = strlen(data);
+	if (msg_Ptr == 0) return 0;
 
-	printk("Reading device: %d\n", MINOR(file->f_path.dentry->d_inode->i_rdev));
+	while (SIZE && *msg_Ptr) {
 
-	if (count < datalen) {
-
-		count = datalen;
+		put_user(*(msg_Ptr++), buf++);
+		SIZE--;
+		bytes_read++;
 	}
+	
+	return bytes_read;
+}
 
-	if (copy_to_user(buf, data, count)) {
+// Write Function
+static ssize_t meme_write(struct file* file, char __user* buf, size_t SIZE, loff_t* offset) {
 
-		return -EFAULT;
-	}
-
-	return count;
+	return 0;
 }
 
 module_init(meme_start);
