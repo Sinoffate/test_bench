@@ -37,6 +37,12 @@ static const struct file_operations meme_fops = {
 };
 
 
+// Global Vars
+static char msg[BUF_LEN];
+static char* msg_Ptr;
+static int Device_Open = 0;
+
+
 struct meme_device_data {
 	struct cdev cdev;
 };
@@ -105,21 +111,34 @@ static void __exit meme_end(void) {
 
 // Open Function
 static int meme_open(struct inode* inode, struct file* file) {
-	printk(KERN_INFO, "Device Opened\n");
+	printk("Device Opened\n");
+
+	static int counter = 0;
+
+	if (Device_open) return -EBUSY;
+
+	Device_Open++;
+	sprintf(msg, "Hello world!\n", counter++);
+
+	MOD_INC_USE_COUNT;
+
 	return 0;
 }
 
 // Release Function
 static int meme_release(struct inode* inode, struct file* file) {
-	printk(KERN_INFO, "Device Released\n");
+	printk("Device Released\n");
+
+	Device_Open--;
+	MOD_DEC_USE_COUNT;
+
 	return 0;
 }
 // Read Function
 static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset) {
-	
-	int bytes_read = 0;
+	printk("Device Read Called\n");
 
-	printk(KERN_INFO, "Device Read Called\n");
+	int bytes_read = 0;
 
 	if (msg_Ptr == 0) return 0;
 
@@ -135,6 +154,8 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_
 
 // Write Function
 static ssize_t meme_write(struct file* file, char __user* buf, size_t SIZE, loff_t* offset) {
+	printk("Device Write Called\n");
+
 
 	return 0;
 }
