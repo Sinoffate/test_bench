@@ -18,7 +18,15 @@ MODULE_AUTHOR("Jered Wiegel");
 MODULE_INFO(version, "0.2");
 
 #define MAX_DEV 1
-#define BUF_LEN 80;
+#define BUF_LEN 80
+#define MODULE
+#define LINUX
+#define __KERNEL__
+
+#if defined(CONFIG_MODVERSIONS) && ! defined(MODVERSIONS)
+#include <linux/modversions.h>
+#define MODVERSIONS
+#endif
 
 // prototypes
 static int meme_open(struct inode* inode, struct file* file);
@@ -141,7 +149,9 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_
 
 	int bytes_read = 0;
 
-	if (msg_Ptr == 0) return 0;
+	if (msg_Ptr == 0) { 
+		return 0; 
+	}
 
 	while (SIZE && *msg_Ptr) {
 
@@ -157,7 +167,7 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_
 static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE, loff_t* offset) {
 	printk("Device Write Called\n");
 
-	printk("Function not supported by this driver.")
+	printk("Function not supported by this driver.");
 	return -EINVAL;
 }
 
