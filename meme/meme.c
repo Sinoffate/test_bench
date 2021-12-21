@@ -159,7 +159,7 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_
 		bytes_read++;
 	}
 	printk("bytes read: %d", bytes_read); // debug
-	copy_to_user(x,msg_Ptr, bytes_read);
+	
 
 	return bytes_read;
 }
