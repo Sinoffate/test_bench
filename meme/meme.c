@@ -146,7 +146,7 @@ static int meme_release(struct inode* inode, struct file* file) {
 static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset) {
 	printk("Device Read Called\n");
 
-	size_t bytes_read = 0;
+	int bytes_read = 0;
 
 	if (msg_Ptr == 0) { 
 		return 0; 
