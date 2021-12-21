@@ -125,7 +125,7 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff
 
 	if (*offset > 0) {
 
-		return 0;;
+		return 0;
 	}
 
 	return datalen;
