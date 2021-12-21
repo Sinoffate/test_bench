@@ -158,7 +158,8 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_
 		SIZE--;
 		bytes_read++;
 	}
-	
+	printk("bytes read: %d", bytes_read); // debug
+
 	return bytes_read;
 }
 
@@ -194,7 +195,7 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 	default:
 
 		pr_info("Default\n");
-		value++;
+		
 
 		break;
 	}
