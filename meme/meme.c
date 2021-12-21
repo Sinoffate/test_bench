@@ -31,15 +31,17 @@ static int meme_open(struct inode* inode, struct file* file);
 static int meme_release(struct inode* inode, struct file* file);
 static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset);
 static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE, loff_t* offset);
+static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg);
 
 // initialize file_operations
 static const struct file_operations meme_fops = {
 
-	.owner		= THIS_MODULE,
-	.open		= meme_open,
-	.release	= meme_release,
-	.read		= meme_read,
-	.write		= meme_write,
+	.owner			= THIS_MODULE,
+	.open			= meme_open,
+	.release		= meme_release,
+	.read			= meme_read,
+	.write			= meme_write,
+	.unlocked_ioctl = meme_ioctl,
 
 };
 
@@ -120,12 +122,10 @@ static void __exit meme_end(void) {
 static int meme_open(struct inode* inode, struct file* file) {
 	printk("Device Opened\n");
 
-	static int counter = 0;
-
 	if (Device_Open) return -EBUSY;
 
 	Device_Open++;
-	sprintf(msg, "Hello world!\n", counter++);
+	sprintf(msg, "Hello world!\n");
 	msg_Ptr = msg;
 	
 
@@ -166,6 +166,37 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE
 
 	printk("Function not supported by this driver.");
 	return -EINVAL;
+}
+
+// Ioctl Function
+static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
+{
+	switch (cmd) {
+	case WR_VALUE:
+		if (copy_from_user(&value, (int32_t*)arg, sizeof(value))) { 
+		
+			pr_err("Data Write : Err!\n");
+		}
+
+		pr_info("Value = %d\n", value++);
+
+		break;
+
+	case RD_VALUE:
+		if (copy_to_user((int32_t*)arg, &value, sizeof(value))) {
+
+			pr_err("Data Read : Err!\n");
+		}
+		break;
+
+	default:
+
+		pr_info("Default\n");
+
+		break;
+	}
+
+	return 0;
 }
 
 module_init(meme_start);
