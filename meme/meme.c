@@ -122,13 +122,15 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t count, loff
 
 		return 0;
 	}
-
+	
 	if (copy_to_user(buf, data, count)) {
 
 		return -EFAULT;
 	}
-
-	return datalen;
+	
+	else
+		return datalen;
+	
 }
 
 module_init(meme_start);
