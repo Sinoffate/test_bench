@@ -12,6 +12,8 @@
 #include <linux/cdev.h>
 #include <linux/uaccess.h>
 #include <linux/fs.h>
+#include <linux/modversions.h>
+
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jered Wiegel");
