@@ -13,6 +13,7 @@
 #include <linux/uaccess.h>
 #include <linux/fs.h>
 #include <asm/errno.h>
+#include <linux/ioctl.h>
 
 
 MODULE_LICENSE("GPL");
@@ -21,9 +22,10 @@ MODULE_INFO(version, "0.6");
 
 #define MAX_DEV 1
 #define BUF_LEN 80
-#define MODULE
-#define LINUX
-#define __KERNEL__
+#define WR_VALUE _IOW('a','a',int32_t*)
+#define RD_VALUE _IOR('a','b',int32_t*)
+
+
 
 
 // prototypes
@@ -50,7 +52,7 @@ static const struct file_operations meme_fops = {
 static char msg[BUF_LEN];
 static char* msg_Ptr;
 static int Device_Open = 0;
-
+int32_t value = 0;
 
 struct meme_device_data {
 	struct cdev cdev;
