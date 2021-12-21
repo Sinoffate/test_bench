@@ -1,7 +1,7 @@
 /**
  * @author Jered Wiegel
  * @date 18 Dec 2021
- * @version 0.2
+ * @version 0.6
  * 
  */
 
@@ -12,12 +12,11 @@
 #include <linux/cdev.h>
 #include <linux/uaccess.h>
 #include <linux/fs.h>
-#include <linux/modversions.h>
 
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jered Wiegel");
-MODULE_INFO(version, "0.2");
+MODULE_INFO(version, "0.6");
 
 #define MAX_DEV 1
 #define BUF_LEN 80
@@ -25,10 +24,6 @@ MODULE_INFO(version, "0.2");
 #define LINUX
 #define __KERNEL__
 
-#if defined(CONFIG_MODVERSIONS) && ! defined(MODVERSIONS)
-#include <linux/modversions.h>
-#define MODVERSIONS
-#endif
 
 // prototypes
 static int meme_open(struct inode* inode, struct file* file);
