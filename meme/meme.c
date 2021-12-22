@@ -166,7 +166,7 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE
 {
 	printk("Device Write Called\n");
 
-    return SIZE;
+	return SIZE;
 }
 
 // Ioctl Function
@@ -177,20 +177,18 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 	switch (cmd) {
 	case WR_VALUE:
 		if (copy_from_user(&value, (int32_t*)arg, sizeof(value))) {
-
 			pr_err("Data Write : Err!\n");
 		}
 
 		pr_info("Value = %d\n", value++);
-        ret = 0;
+		ret = 0;
 		break;
 
 	case RD_VALUE:
 		if (copy_to_user((int32_t*)arg, &value, sizeof(value))) {
-
 			pr_err("Data Read : Err!\n");
 		}
-        ret = 0;
+		ret = 0;
 		break;
 
 	default:
