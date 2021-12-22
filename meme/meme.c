@@ -24,6 +24,13 @@ MODULE_INFO(version, "0.6");
 #define WR_VALUE _IOW('a','a',int32_t*)
 #define RD_VALUE _IOR('a','b',int32_t*)
 
+struct meme_increment_t {
+    uint64_t target;
+};
+
+#define IOCTL_MEME_BASE 0x69;
+
+#define IOCTL_MEME_INCREMENT         _IOWR(IOCTL_MEME_BASE, 0x0, struct meme_increment_t)
 
 // prototypes
 static int meme_open(struct inode* inode, struct file* file);
@@ -190,6 +197,10 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 		}
 		ret = 0;
 		break;
+
+    case IOCTL_MEME_INCREMENT:
+        pr_info("Meme increment ioctl called\n");
+        break;
 
 	default:
 
