@@ -52,7 +52,7 @@ static const struct file_operations meme_fops = {
 static char msg[BUF_LEN];
 static char* msg_Ptr;
 static int Device_Open = 0;
-int32_t value = 0;
+int32_t value = 1;
 
 struct meme_device_data {
 	struct cdev cdev;
