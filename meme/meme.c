@@ -168,8 +168,8 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_
 static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE, loff_t* offset) {
 	printk("Device Write Called\n");
 
-	printk("Function not supported by this driver.");
-	return -EINVAL;
+	
+	return SIZE;
 }
 
 // Ioctl Function
