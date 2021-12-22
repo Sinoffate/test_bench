@@ -2,7 +2,7 @@
  * @author Jered Wiegel
  * @date 18 Dec 2021
  * @version 0.6
- * 
+ *
  */
 
 #include <linux/module.h>
@@ -15,7 +15,6 @@
 #include <asm/errno.h>
 #include <linux/ioctl.h>
 
-
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jered Wiegel");
 MODULE_INFO(version, "0.6");
@@ -24,8 +23,6 @@ MODULE_INFO(version, "0.6");
 #define BUF_LEN 80
 #define WR_VALUE _IOW('a','a',int32_t*)
 #define RD_VALUE _IOR('a','b',int32_t*)
-
-
 
 
 // prototypes
@@ -47,7 +44,6 @@ static const struct file_operations meme_fops = {
 
 };
 
-
 // Global Vars
 static char msg[BUF_LEN];
 static char* msg_Ptr;
@@ -68,16 +64,16 @@ static struct class *meme_class = NULL;
 static struct meme_device_data meme_data[MAX_DEV];
 
 // sets permissions to all for user to interact with driver
-static int meme_uevent(struct device* dev, struct kobj_uevent_env* env) {
-
+static int meme_uevent(struct device* dev, struct kobj_uevent_env* env)
+{
 	add_uevent_var(env, "DEVMODE=%#o", 0666);
 	return 0;
 }
 
 
 // initialization function
-static int __init meme_start(void) { 
-	
+static int __init meme_start(void)
+{
 	int err, i;
 	dev_t dev;
 
@@ -106,8 +102,8 @@ static int __init meme_start(void) {
 
 
 // cleanup function
-static void __exit meme_end(void) {
-	
+static void __exit meme_end(void)
+{
 	int i;
 
 	for (i = 0; i < MAX_DEV; i++) {
@@ -121,7 +117,8 @@ static void __exit meme_end(void) {
 }
 
 // Open Function
-static int meme_open(struct inode* inode, struct file* file) {
+static int meme_open(struct inode* inode, struct file* file)
+{
 	printk("Device Opened\n");
 
 	if (Device_Open) return -EBUSY;
@@ -129,13 +126,13 @@ static int meme_open(struct inode* inode, struct file* file) {
 	Device_Open++;
 	sprintf(msg, "Hello world!");
 	msg_Ptr = msg;
-	
 
 	return 0;
 }
 
 // Release Function
-static int meme_release(struct inode* inode, struct file* file) {
+static int meme_release(struct inode* inode, struct file* file)
+{
 	printk("Device Released\n");
 
 	Device_Open--;
@@ -143,13 +140,14 @@ static int meme_release(struct inode* inode, struct file* file) {
 	return 0;
 }
 // Read Function
-static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset) {
+static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset)
+{
 	printk("Device Read Called\n");
 
 	int bytes_read = 0;
 
-	if (msg_Ptr == 0) { 
-		return 0; 
+	if (msg_Ptr == 0) {
+		return 0;
 	}
 
 	while (SIZE && *msg_Ptr) {
@@ -159,31 +157,32 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_
 		bytes_read++;
 	}
 	printk("bytes read: %d", bytes_read); // debug
-	
 
 	return bytes_read;
 }
 
 // Write Function
-static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE, loff_t* offset) {
+static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE, loff_t* offset)
+{
 	printk("Device Write Called\n");
 
-	
-	return SIZE;
+    return SIZE;
 }
 
 // Ioctl Function
 static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 {
+	long ret = -ENOIOCTLCMD;
+
 	switch (cmd) {
 	case WR_VALUE:
-		if (copy_from_user(&value, (int32_t*)arg, sizeof(value))) { 
-		
+		if (copy_from_user(&value, (int32_t*)arg, sizeof(value))) {
+
 			pr_err("Data Write : Err!\n");
 		}
 
 		pr_info("Value = %d\n", value++);
-
+        ret = 0;
 		break;
 
 	case RD_VALUE:
@@ -191,17 +190,16 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 
 			pr_err("Data Read : Err!\n");
 		}
+        ret = 0;
 		break;
 
 	default:
 
-		pr_info("Default\n");
-		
-
+		pr_err("Unable to handle ioctl %lu\n", cmd);
 		break;
 	}
 
-	return 0;
+	return ret;
 }
 
 module_init(meme_start);
