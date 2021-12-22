@@ -127,7 +127,7 @@ static int meme_open(struct inode* inode, struct file* file) {
 	if (Device_Open) return -EBUSY;
 
 	Device_Open++;
-	sprintf(msg, "Hello world!\n");
+	sprintf(msg, "Hello world!");
 	msg_Ptr = msg;
 	
 
