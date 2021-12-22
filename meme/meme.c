@@ -176,6 +176,11 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE
 	return SIZE;
 }
 
+static int meme_increment(struct meme_increment_t __user *arg)
+{
+    return 0;
+}
+
 // Ioctl Function
 static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 {
