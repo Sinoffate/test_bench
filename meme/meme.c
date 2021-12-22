@@ -195,7 +195,7 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 
 	default:
 
-		pr_err("Unable to handle ioctl %lu\n", cmd);
+		pr_err("Unable to handle ioctl %u\n", cmd);
 		break;
 	}
 
