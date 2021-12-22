@@ -28,7 +28,7 @@ struct meme_increment_t {
     uint64_t target;
 };
 
-#define IOCTL_MEME_BASE 0x69;
+#define IOCTL_MEME_BASE 0x69
 
 #define IOCTL_MEME_INCREMENT         _IOWR(IOCTL_MEME_BASE, 0x0, struct meme_increment_t)
 
@@ -178,7 +178,10 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE
 
 static int meme_increment(struct meme_increment_t __user *arg)
 {
-    return 0;
+	uint64_t meme = *arg;
+	meme++;
+	
+	return meme;
 }
 
 // Ioctl Function
@@ -205,6 +208,7 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 
     case IOCTL_MEME_INCREMENT:
         pr_info("Meme increment ioctl called\n");
+		meme_increment((meme_increment_t *) arg);
         break;
 
 	default:
