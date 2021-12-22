@@ -28,7 +28,7 @@ struct meme_increment_t {
     uint64_t target;
 };
 
-#define IOCTL_MEME_BASE 0x69;
+#define IOCTL_MEME_BASE 0x69
 
 #define IOCTL_MEME_INCREMENT         _IOWR(IOCTL_MEME_BASE, 0x0, struct meme_increment_t)
 
