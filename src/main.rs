@@ -23,7 +23,7 @@ ioctl_readwrite!(
 fn main() {
     println!("Usage ./test_bench /location/to/device <input number>");
 
-    let args: Vec<String>= env::args().collect();
+    let args: Vec<String> = env::args().collect();
     let path = args[1].clone();
     let val = args[2].parse().unwrap();
 
@@ -40,14 +40,18 @@ fn main() {
         println!("lol get fucked - {}", output);
     }
 
-    let mut input = meme_increment_t {
-        target: val,
-    };
+    let mut input = meme_increment_t { target: val };
 
     unsafe {
-        meme_increment(driver_fd.as_raw_fd(), &mut input).expect("call to ioctl failed...");
+        meme_increment(driver_fd.as_raw_fd(), &mut input)
+            .expect("call to ioctl failed...")
+            .unwrap();
     }
 
-    println!("got input {}, expected result {}, actual result {}", val, val + 1, input.target);
+    println!(
+        "got input {}, expected result {}, actual result {}",
+        val,
+        val + 1,
+        input.target
+    );
 }
-
