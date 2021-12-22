@@ -43,9 +43,7 @@ fn main() {
     let mut input = meme_increment_t { target: val };
 
     unsafe {
-        meme_increment(driver_fd.as_raw_fd(), &mut input)
-            .expect("call to ioctl failed...")
-            .unwrap();
+        meme_increment(driver_fd.as_raw_fd(), &mut input).unwrap();
     }
 
     println!(
