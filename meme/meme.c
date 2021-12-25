@@ -179,9 +179,9 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE
 static int meme_increment(struct meme_increment_t __user *arg)
 {
 	target = &arg;
-	meme++;
+	target++;
 	
-	return meme;
+	return target;
 }
 
 // Ioctl Function
