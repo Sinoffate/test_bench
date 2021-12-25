@@ -206,7 +206,7 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 
     case IOCTL_MEME_INCREMENT:
         pr_info("Meme increment ioctl called\n");
-		pr_info("Value passed by user is %lu\n", arg);
+		printk("Value passed by user is %lu\n", arg);
 		
         break;
 
