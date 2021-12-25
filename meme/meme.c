@@ -178,10 +178,8 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE
 
 static int meme_increment(struct meme_increment_t __user *arg)
 {
-	target = &arg;
-	target++;
-	
-	return target;
+		
+	return 0;
 }
 
 // Ioctl Function
@@ -208,7 +206,8 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 
     case IOCTL_MEME_INCREMENT:
         pr_info("Meme increment ioctl called\n");
-		meme_increment((struct) arg);
+		pr_info("Value passed by user is %d", arg);
+		
         break;
 
 	default:
