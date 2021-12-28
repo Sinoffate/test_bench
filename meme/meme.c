@@ -212,7 +212,7 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
     case IOCTL_MEME_INCREMENT:
 		pr_info("Meme increment ioctl called\n");
 		
-		meme_increment((struct meme_increment_t *) arg);
+		ret = meme_increment((struct meme_increment_t *) arg);
 		
         break;
 
