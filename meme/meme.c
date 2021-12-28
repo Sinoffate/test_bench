@@ -178,8 +178,8 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE
 
 static int meme_increment(struct meme_increment_t __user *arg)
 {
-
-	*arg = (int)target;
+	int target;
+	*arg = target;
 
 	return target++;
 }
