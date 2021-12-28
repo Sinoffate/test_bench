@@ -21,16 +21,14 @@ MODULE_INFO(version, "0.6");
 
 #define MAX_DEV 1
 #define BUF_LEN 80
-#define WR_VALUE _IOW('a','a',int32_t*)
-#define RD_VALUE _IOR('a','b',int32_t*)
+#define IOCTL_MEME_BASE 0x69
+#define IOCTL_MEME_INCREMENT         _IOWR(IOCTL_MEME_BASE, 0x0, struct meme_increment_t)
 
 struct meme_increment_t {
     uint64_t target;
 };
 
-#define IOCTL_MEME_BASE 0x69
 
-#define IOCTL_MEME_INCREMENT         _IOWR(IOCTL_MEME_BASE, 0x0, struct meme_increment_t)
 
 // prototypes
 static int meme_open(struct inode* inode, struct file* file);
@@ -55,7 +53,6 @@ static const struct file_operations meme_fops = {
 static char msg[BUF_LEN];
 static char* msg_Ptr;
 static int Device_Open = 0;
-int value = 0;
 uint64_t target = 0;
 
 struct meme_device_data {
@@ -179,10 +176,7 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE
 
 static int meme_increment(struct meme_increment_t __user *arg)
 {
-	
 	arg->target++;
-
-	
 
 	return (int)target;
 }
@@ -194,22 +188,7 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 	long ret = -ENOIOCTLCMD;
 
 	switch (cmd) {
-	case WR_VALUE:
-		if (copy_from_user(&value, (int32_t*)arg, sizeof(value))) {
-			pr_err("Data Write : Err!\n");
-		}
-
-		ret = 0;
-		break;
-
-	case RD_VALUE:
-		if (copy_to_user((int32_t*)arg, &value, sizeof(value))) {
-			pr_err("Data Read : Err!\n");
-		}
-		ret = 0;
-		break;
-
-    case IOCTL_MEME_INCREMENT:
+	    case IOCTL_MEME_INCREMENT:
 		pr_info("Meme increment ioctl called\n");
 		
 		ret = meme_increment((struct meme_increment_t *) arg);
