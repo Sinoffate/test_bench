@@ -185,6 +185,7 @@ static int meme_increment(struct meme_increment_t __user *arg)
 // Ioctl Function
 static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 {
+	struct meme_increment_t target;
 	long ret = -ENOIOCTLCMD;
 
 	switch (cmd) {
@@ -206,7 +207,11 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 
     case IOCTL_MEME_INCREMENT:
 		pr_info("Meme increment ioctl called\n");
-		
+		if (copy_from_user(&target, (struct meme_increment_t*)arg, sizeof(target)) {
+			printk("Error copying data from user!\n");
+		}
+		else
+			target++;
 		
         break;
 
