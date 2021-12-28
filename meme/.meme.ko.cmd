@@ -1,0 +1,1 @@
+cmd_/home/nydus/test_bench/meme/meme.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000  --build-id  -T ./scripts/module-common.lds -o /home/nydus/test_bench/meme/meme.ko /home/nydus/test_bench/meme/meme.o /home/nydus/test_bench/meme/meme.mod.o;  true
