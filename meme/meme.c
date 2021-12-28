@@ -55,7 +55,7 @@ static const struct file_operations meme_fops = {
 static char msg[BUF_LEN];
 static char* msg_Ptr;
 static int Device_Open = 0;
-int32_t value = 1;
+
 
 struct meme_device_data {
 	struct cdev cdev;
@@ -178,14 +178,16 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE
 
 static int meme_increment(struct meme_increment_t __user *arg)
 {
-		
-	return 0;
+
+	*arg = (int)target;
+
+	return target++;
 }
 
 // Ioctl Function
 static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 {
-	struct meme_increment_t target;
+	
 	long ret = -ENOIOCTLCMD;
 
 	switch (cmd) {
@@ -194,7 +196,6 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 			pr_err("Data Write : Err!\n");
 		}
 
-		pr_info("Value = %d\n", value++);
 		ret = 0;
 		break;
 
@@ -207,11 +208,8 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 
     case IOCTL_MEME_INCREMENT:
 		pr_info("Meme increment ioctl called\n");
-		if (copy_from_user(&target, (struct meme_increment_t*)arg, sizeof(target))) {
-			printk("Error copying data from user!\n");
-		}
 		
-		target++;
+		meme_increment((struct meme_increment_t *) arg);
 		
         break;
 
