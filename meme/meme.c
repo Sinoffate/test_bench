@@ -56,6 +56,7 @@ static char msg[BUF_LEN];
 static char* msg_Ptr;
 static int Device_Open = 0;
 int value = 0;
+uint64_t target = 0;
 
 struct meme_device_data {
 	struct cdev cdev;
@@ -183,7 +184,7 @@ static int meme_increment(struct meme_increment_t __user *arg)
 
 	
 
-	return target;
+	return (int)target;
 }
 
 // Ioctl Function
