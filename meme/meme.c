@@ -33,8 +33,8 @@ struct meme_increment_t {
 // prototypes
 static int meme_open(struct inode* inode, struct file* file);
 static int meme_release(struct inode* inode, struct file* file);
-static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset);
-static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE, loff_t* offset);
+static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset);
+static ssize_t meme_write(struct file* file, const char __user* buf, size_t size, loff_t* offset);
 static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg);
 
 // initialize file_operations
@@ -145,7 +145,7 @@ static int meme_release(struct inode* inode, struct file* file)
 	return 0;
 }
 // Read Function
-static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset)
+static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
 {
 	printk("Device Read Called\n");
 
@@ -155,10 +155,10 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_
 		return 0;
 	}
 
-	while (SIZE && *msg_Ptr) {
+	while (size && *msg_Ptr) {
 
 		put_user(*(msg_Ptr++), buf++);
-		SIZE--;
+		size--;
 		bytes_read++;
 	}
 	printk("bytes read: %d", bytes_read); // debug
@@ -167,18 +167,18 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_
 }
 
 // Write Function
-static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE, loff_t* offset)
+static ssize_t meme_write(struct file* file, const char __user* buf, size_t size, loff_t* offset)
 {
 	printk("Device Write Called\n");
 
-	return SIZE;
+	return size;
 }
 
 static int meme_increment(struct meme_increment_t __user *arg)
 {
 	arg->target++;
 
-	return (int)target;
+	return 0;
 }
 
 // Ioctl Function
