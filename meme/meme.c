@@ -169,7 +169,7 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_
 // Write Function
 static ssize_t meme_write(struct file* file, const char __user* buf, size_t size, loff_t* offset)
 {
-	printk("Device Write Called\n");
+	pr_info("Device Write Called\n");
 
 	return size;
 }
