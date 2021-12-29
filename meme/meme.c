@@ -1,7 +1,7 @@
 /**
  * @author Jered Wiegel
  * @date 18 Dec 2021
- * @version 0.6
+ * @version 0.1
  *
  */
 
@@ -17,7 +17,7 @@
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jered Wiegel");
-MODULE_INFO(version, "0.6");
+MODULE_INFO(version, "0.1");
 
 #define MAX_DEV 1
 #define BUF_LEN 80
@@ -51,8 +51,8 @@ static const struct file_operations meme_fops = {
 
 // Global Vars
 static char msg[BUF_LEN];
-static char* msg_Ptr;
-static int Device_Open = 0;
+static char* msg_ptr;
+static int device_open = 0;
 uint64_t target = 0;
 
 struct meme_device_data {
@@ -128,9 +128,9 @@ static int meme_open(struct inode* inode, struct file* file)
 
 	if (Device_Open) return -EBUSY;
 
-	Device_Open++;
+	device_open++;
 	sprintf(msg, "Hello world!");
-	msg_Ptr = msg;
+	msg_ptr = msg;
 
 	return 0;
 }
@@ -140,7 +140,7 @@ static int meme_release(struct inode* inode, struct file* file)
 {
 	pr_info("Device Released\n");
 
-	Device_Open--;
+	device_open--;
 
 	return 0;
 }
@@ -149,15 +149,16 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_
 {
 	pr_info("Device Read Called\n");
 
-	int bytes_read = 0;
+	int bytes_read;
+	bytes_read = 0;
 
-	if (msg_Ptr == 0) {
+	if (msg_ptr == 0) {
 		return 0;
 	}
 
-	while (size && *msg_Ptr) {
+	while (size && *msg_ptr) {
 
-		put_user(*(msg_Ptr++), buf++);
+		put_user(*(msg_ptr++), buf++);
 		size--;
 		bytes_read++;
 	}
