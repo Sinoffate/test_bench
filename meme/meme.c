@@ -124,7 +124,7 @@ static void __exit meme_end(void)
 // Open Function
 static int meme_open(struct inode* inode, struct file* file)
 {
-	printk("Device Opened\n");
+	pr_info("Device Opened\n");
 
 	if (Device_Open) return -EBUSY;
 
@@ -138,7 +138,7 @@ static int meme_open(struct inode* inode, struct file* file)
 // Release Function
 static int meme_release(struct inode* inode, struct file* file)
 {
-	printk("Device Released\n");
+	pr_info("Device Released\n");
 
 	Device_Open--;
 
@@ -147,7 +147,7 @@ static int meme_release(struct inode* inode, struct file* file)
 // Read Function
 static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
 {
-	printk("Device Read Called\n");
+	pr_info("Device Read Called\n");
 
 	int bytes_read = 0;
 
@@ -161,7 +161,7 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_
 		size--;
 		bytes_read++;
 	}
-	printk("bytes read: %d", bytes_read); // debug
+	pr_info("bytes read: %d", bytes_read); // debug
 
 	return bytes_read;
 }
