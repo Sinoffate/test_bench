@@ -93,14 +93,14 @@ static int __init meme_start(void)
 
 
 	// in order to allow for multiple devices to be created (increment the MAX_DEV var to inc/dec)
-	for (i = 0; i < MAX_DEV; i++) {
-		cdev_init(&meme_data[i].cdev, &meme_fops);
-		meme_data[i].cdev.owner = THIS_MODULE;
-
-		cdev_add(&meme_data[i].cdev, MKDEV(dev_major, i), 1);
-
-		device_create(meme_class, NULL, MKDEV(dev_major, i), NULL, "meme-%d", i);
-	}
+//	for (i = 0; i < MAX_DEV; i++) {
+//		cdev_init(&meme_data[i].cdev, &meme_fops);
+//		meme_data[i].cdev.owner = THIS_MODULE;
+//
+//		cdev_add(&meme_data[i].cdev, MKDEV(dev_major, i), 1);
+//
+//		device_create(meme_class, NULL, MKDEV(dev_major, i), NULL, "meme-%d", i);
+//	}
 
 	return 0;
 }
