@@ -38,7 +38,8 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t size
 static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg);
 
 // initialize file_operations
-static const struct file_operations meme_fops = {
+static const struct file_operations meme_fops
+{
 
 	.owner			= THIS_MODULE,
 	.open			= meme_open,
@@ -55,7 +56,8 @@ static char* msg_ptr;
 static int device_open = 0;
 uint64_t target = 0;
 
-struct meme_device_data {
+struct meme_device_data
+{
 	struct cdev cdev;
 };
 
