@@ -30,6 +30,8 @@ struct meme_increment_t {
 
 
 
+
+
 // prototypes
 static int meme_open(struct inode* inode, struct file* file);
 static int meme_release(struct inode* inode, struct file* file);
@@ -93,16 +95,12 @@ static int __init meme_start(void)
 	meme_class = class_create(THIS_MODULE, "meme");
 	meme_class->dev_uevent = meme_uevent;
 
+    cdev_init(&meme_data.cdev, &meme_fops);
+    meme_data.cdev.owner = THIS_MODULE;
 
-	// in order to allow for multiple devices to be created (increment the MAX_DEV var to inc/dec)
-//	for (i = 0; i < MAX_DEV; i++) {
-//		cdev_init(&meme_data[i].cdev, &meme_fops);
-//		meme_data[i].cdev.owner = THIS_MODULE;
-//
-//		cdev_add(&meme_data[i].cdev, MKDEV(dev_major, i), 1);
-//
-//		device_create(meme_class, NULL, MKDEV(dev_major, i), NULL, "meme-%d", i);
-//	}
+    cdev_add(&meme_data.cdev, MKDEV(dev_major), 1);
+    device_create(meme_class, NULL, MKDEV(dev_major), NULL, "meme");
+
 
 	return 0;
 }
@@ -111,11 +109,7 @@ static int __init meme_start(void)
 // cleanup function
 static void __exit meme_end(void)
 {
-	int i;
-
-	for (i = 0; i < MAX_DEV; i++) {
-		device_destroy(meme_class, MKDEV(dev_major, i));
-	}
+	device_destroy(meme_class, MKDEV(dev_major));
 
 	class_unregister(meme_class);
 	class_destroy(meme_class);
@@ -126,13 +120,8 @@ static void __exit meme_end(void)
 // Open Function
 static int meme_open(struct inode* inode, struct file* file)
 {
-	pr_info("Device Opened\n");
 
-	if (Device_Open) return -EBUSY;
-
-	device_open++;
-	sprintf(msg, "Hello world!");
-	msg_ptr = msg;
+    pr_info("Device Opened\n");
 
 	return 0;
 }
@@ -140,9 +129,8 @@ static int meme_open(struct inode* inode, struct file* file)
 // Release Function
 static int meme_release(struct inode* inode, struct file* file)
 {
-	pr_info("Device Released\n");
 
-	device_open--;
+    pr_info("Device Released\n");
 
 	return 0;
 }
