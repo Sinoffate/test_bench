@@ -158,7 +158,7 @@ static int meme_increment(struct meme_increment_t __user *arg)
 {
     // attempt 2
     int value;
-    value = &arg;
+    value = (int) &arg;
 
 	return value++;
 }
