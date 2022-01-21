@@ -109,7 +109,7 @@ static void __exit meme_end(void)
 {
 
     mutex_destroy(&meme_mutex);
-    device_destroy(meme_class, MKDEV(dev_major));
+    device_destroy(meme_class, MKDEV(dev_major, 1));
 
 	class_unregister(meme_class);
 	class_destroy(meme_class);
