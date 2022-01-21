@@ -14,6 +14,7 @@
 #include <linux/fs.h>
 #include <asm/errno.h>
 #include <linux/ioctl.h>
+#include <linux/mutex.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jered Wiegel");
@@ -28,11 +29,8 @@ struct meme_increment_t {
     uint64_t target;
 };
 
-
-
-
-
 // prototypes
+struct mutex meme_mutex;
 static int meme_open(struct inode* inode, struct file* file);
 static int meme_release(struct inode* inode, struct file* file);
 static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset);
@@ -100,7 +98,7 @@ static int __init meme_start(void)
 
     cdev_add(&meme_data.cdev, MKDEV(dev_major), 1);
     device_create(meme_class, NULL, MKDEV(dev_major), NULL, "meme");
-
+    mutex_init(&meme_mutex);
 
 	return 0;
 }
@@ -109,12 +107,16 @@ static int __init meme_start(void)
 // cleanup function
 static void __exit meme_end(void)
 {
-	device_destroy(meme_class, MKDEV(dev_major));
+
+    mutex_destroy(&meme_mutex);
+    device_destroy(meme_class, MKDEV(dev_major));
 
 	class_unregister(meme_class);
 	class_destroy(meme_class);
 
 	unregister_chrdev_region(MKDEV(dev_major, 0), MINORMASK);
+
+
 }
 
 // Open Function
@@ -122,7 +124,7 @@ static int meme_open(struct inode* inode, struct file* file)
 {
 
     pr_info("Device Opened\n");
-
+    mutex_lock(&meme_mutex);
 	return 0;
 }
 
@@ -131,7 +133,7 @@ static int meme_release(struct inode* inode, struct file* file)
 {
 
     pr_info("Device Released\n");
-
+    mutex_unlock(&meme_mutex)
 	return 0;
 }
 // Read Function
@@ -167,9 +169,10 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t size
 
 static int meme_increment(struct meme_increment_t __user *arg)
 {
-	arg->target++;
+	target = copy_from_user(&arg, buff, len);
+    target++;
 
-	return 0;
+	return target;
 }
 
 // Ioctl Function
