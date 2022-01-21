@@ -93,11 +93,11 @@ static int __init meme_start(void)
 	meme_class = class_create(THIS_MODULE, "meme");
 	meme_class->dev_uevent = meme_uevent;
 
-    cdev_init(&meme_data.cdev, &meme_fops);
-    meme_data.cdev.owner = THIS_MODULE;
+    cdev_init(&meme_data->cdev, &meme_fops);
+    meme_data->cdev.owner = THIS_MODULE;
 
-    cdev_add(&meme_data.cdev, MKDEV(dev_major), 1);
-    device_create(meme_class, NULL, MKDEV(dev_major), NULL, "meme");
+    cdev_add(&meme_data->cdev, MKDEV(dev_major, 1), 1);
+    device_create(meme_class, NULL, MKDEV(dev_major, 1), NULL, "meme");
     mutex_init(&meme_mutex);
 
 	return 0;
@@ -133,7 +133,7 @@ static int meme_release(struct inode* inode, struct file* file)
 {
 
     pr_info("Device Released\n");
-    mutex_unlock(&meme_mutex)
+    mutex_unlock(&meme_mutex);
 	return 0;
 }
 // Read Function
