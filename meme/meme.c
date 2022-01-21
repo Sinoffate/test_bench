@@ -81,7 +81,7 @@ static int meme_uevent(struct device* dev, struct kobj_uevent_env* env)
 // initialization function
 static int __init meme_start(void)
 {
-	int err, i;
+	int err;
 	dev_t dev;
 
 	dev_major = MAJOR(dev);
@@ -169,7 +169,7 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t size
 
 static int meme_increment(struct meme_increment_t __user *arg)
 {
-	target = copy_from_user(&arg, buff, len);
+	target = copy_from_user(&arg, buf, len);
     target++;
 
 	return target;
