@@ -51,9 +51,6 @@ static const struct file_operations meme_fops =
 };
 
 // Global Vars
-static char msg[BUF_LEN];
-static char* msg_ptr;
-static int device_open = 0;
 uint64_t target = 0;
 
 struct meme_device_data
@@ -161,7 +158,7 @@ static int meme_increment(struct meme_increment_t __user *arg)
 {
 
     int value;
-    value = copy_from_user(&arg);
+    value = &arg;
 
 	return value++;
 }
