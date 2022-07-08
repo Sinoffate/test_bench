@@ -137,7 +137,7 @@ static int meme_release(struct inode* inode, struct file* file)
 static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
 {
 	pr_info("Device Read Called\n");
-    char* desp;
+    char* desp '';
 
     target = copy_from_user(desp, buf, size);
 
@@ -156,11 +156,12 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t size
 
 static int meme_increment(struct meme_increment_t __user *arg)
 {
-    // attempt 2
-    int value;
-    value = arg;
+	struct meme_increment_t increment;
+	if (copy_from_user(&increment, arg, sizeof(increment)))
+		return -EFAULT;
+	target += increment.target;
+	return 0;
 
-	return value++;
 }
 
 // Ioctl Function
