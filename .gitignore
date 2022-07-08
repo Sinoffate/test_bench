@@ -1,2 +1,8 @@
 /target
 /.vs/test_bench/v16/Browse.VC.opendb
+.vscode/settings.json
+.vscode/c_cpp_properties.json
+.idea/vcs.xml
+.idea/test_bench.iml
+.idea/modules.xml
+.idea/.gitignore
