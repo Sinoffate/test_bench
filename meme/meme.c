@@ -116,24 +116,20 @@ static void __exit meme_end(void)
 
 }
 
-// Open Function
 static int meme_open(struct inode* inode, struct file* file)
 {
-
-    pr_info("Device Opened\n");
+    pr_info("Hello World!");
     mutex_lock(&meme_mutex);
 	return 0;
 }
 
-// Release Function
 static int meme_release(struct inode* inode, struct file* file)
 {
-
     pr_info("Device Released\n");
     mutex_unlock(&meme_mutex);
 	return 0;
 }
-// Read Function
+
 static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
 {
 	pr_info("Device Read Called\n");
@@ -146,7 +142,6 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_
 	return target;
 }
 
-// Write Function
 static ssize_t meme_write(struct file* file, const char __user* buf, size_t size, loff_t* offset)
 {
 	pr_info("Device Write Called\n");
@@ -164,7 +159,6 @@ static int meme_increment(struct meme_increment_t __user *arg)
 
 }
 
-// Ioctl Function
 static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 {
 	
