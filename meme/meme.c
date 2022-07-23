@@ -1,7 +1,7 @@
 /**
  * @author Jered Wiegel
  * @date 18 Dec 2021
- * @version 0.6
+ * @version 0.1
  *
  */
 
@@ -14,10 +14,11 @@
 #include <linux/fs.h>
 #include <asm/errno.h>
 #include <linux/ioctl.h>
+#include <linux/mutex.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jered Wiegel");
-MODULE_INFO(version, "0.6");
+MODULE_INFO(version, "0.1");
 
 #define MAX_DEV 1
 #define BUF_LEN 80
@@ -28,17 +29,17 @@ struct meme_increment_t {
     uint64_t target;
 };
 
-
-
 // prototypes
+struct mutex meme_mutex;
 static int meme_open(struct inode* inode, struct file* file);
 static int meme_release(struct inode* inode, struct file* file);
-static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset);
-static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE, loff_t* offset);
+static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset);
+static ssize_t meme_write(struct file* file, const char __user* buf, size_t size, loff_t* offset);
 static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg);
 
 // initialize file_operations
-static const struct file_operations meme_fops = {
+static const struct file_operations meme_fops =
+{
 
 	.owner			= THIS_MODULE,
 	.open			= meme_open,
@@ -50,12 +51,10 @@ static const struct file_operations meme_fops = {
 };
 
 // Global Vars
-static char msg[BUF_LEN];
-static char* msg_Ptr;
-static int Device_Open = 0;
 uint64_t target = 0;
 
-struct meme_device_data {
+struct meme_device_data
+{
 	struct cdev cdev;
 };
 
@@ -79,7 +78,7 @@ static int meme_uevent(struct device* dev, struct kobj_uevent_env* env)
 // initialization function
 static int __init meme_start(void)
 {
-	int err, i;
+	int err;
 	dev_t dev;
 
 	dev_major = MAJOR(dev);
@@ -91,16 +90,12 @@ static int __init meme_start(void)
 	meme_class = class_create(THIS_MODULE, "meme");
 	meme_class->dev_uevent = meme_uevent;
 
+    cdev_init(&meme_data->cdev, &meme_fops);
+    meme_data->cdev.owner = THIS_MODULE;
 
-	// in order to allow for multiple devices to be created (increment the MAX_DEV var to inc/dec)
-	for (i = 0; i < MAX_DEV; i++) {
-		cdev_init(&meme_data[i].cdev, &meme_fops);
-		meme_data[i].cdev.owner = THIS_MODULE;
-
-		cdev_add(&meme_data[i].cdev, MKDEV(dev_major, i), 1);
-
-		device_create(meme_class, NULL, MKDEV(dev_major, i), NULL, "meme-%d", i);
-	}
+    cdev_add(&meme_data->cdev, MKDEV(dev_major, 1), 1);
+    device_create(meme_class, NULL, MKDEV(dev_major, 1), NULL, "meme");
+    mutex_init(&meme_mutex);
 
 	return 0;
 }
@@ -109,79 +104,61 @@ static int __init meme_start(void)
 // cleanup function
 static void __exit meme_end(void)
 {
-	int i;
 
-	for (i = 0; i < MAX_DEV; i++) {
-		device_destroy(meme_class, MKDEV(dev_major, i));
-	}
+    mutex_destroy(&meme_mutex);
+    device_destroy(meme_class, MKDEV(dev_major, 1));
 
 	class_unregister(meme_class);
 	class_destroy(meme_class);
 
 	unregister_chrdev_region(MKDEV(dev_major, 0), MINORMASK);
+
+
 }
 
-// Open Function
 static int meme_open(struct inode* inode, struct file* file)
 {
-	printk("Device Opened\n");
-
-	if (Device_Open) return -EBUSY;
-
-	Device_Open++;
-	sprintf(msg, "Hello world!");
-	msg_Ptr = msg;
-
+    pr_info("Hello World!");
+    mutex_lock(&meme_mutex);
 	return 0;
 }
 
-// Release Function
 static int meme_release(struct inode* inode, struct file* file)
 {
-	printk("Device Released\n");
-
-	Device_Open--;
-
+    pr_info("Device Released\n");
+    mutex_unlock(&meme_mutex);
 	return 0;
 }
-// Read Function
-static ssize_t meme_read(struct file* file, char __user* buf, size_t SIZE, loff_t* offset)
+
+static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
 {
-	printk("Device Read Called\n");
+	pr_info("Device Read Called\n");
+    char* desp '';
 
-	int bytes_read = 0;
+    target = copy_from_user(desp, buf, size);
 
-	if (msg_Ptr == 0) {
-		return 0;
-	}
 
-	while (SIZE && *msg_Ptr) {
 
-		put_user(*(msg_Ptr++), buf++);
-		SIZE--;
-		bytes_read++;
-	}
-	printk("bytes read: %d", bytes_read); // debug
-
-	return bytes_read;
+	return target;
 }
 
-// Write Function
-static ssize_t meme_write(struct file* file, const char __user* buf, size_t SIZE, loff_t* offset)
+static ssize_t meme_write(struct file* file, const char __user* buf, size_t size, loff_t* offset)
 {
-	printk("Device Write Called\n");
+	pr_info("Device Write Called\n");
 
-	return SIZE;
+	return size;
 }
 
 static int meme_increment(struct meme_increment_t __user *arg)
 {
-	arg->target++;
+	struct meme_increment_t increment;
+	if (copy_from_user(&increment, arg, sizeof(increment)))
+		return -EFAULT;
+	target += increment.target;
+	return 0;
 
-	return (int)target;
 }
 
-// Ioctl Function
 static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 {
 	
