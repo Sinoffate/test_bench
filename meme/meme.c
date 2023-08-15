@@ -126,8 +126,8 @@ static int __init meme_start(void)
 // cleanup function
 static void __exit meme_end(void)
 {
-    	mutex_destroy(&meme_mutex);
-    	device_destroy(meme_class, MKDEV(dev_major, 1));
+    mutex_destroy(&meme_mutex);
+    device_destroy(meme_class, MKDEV(dev_major, 1));
 
 	class_unregister(meme_class);
 	class_destroy(meme_class);
@@ -154,11 +154,13 @@ static int meme_release(struct inode* inode, struct file* file)
 static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
 {
 	pr_info("Device Read Called\n");
-	char desp[] = "";
+    if (size < sizeof(target))
+        return -EINVAL;  // Ensure the buffer is large enough
 
-	target = copy_to_user(desp, buf, size);
+    if (copy_to_user(buf, &target, sizeof(target)))
+        return -EFAULT;  // Error copying to user space
 
-	return target;
+	return sizeof(target);
 }
 
 static ssize_t meme_write(struct file* file, const char __user* buf, size_t size, loff_t* offset)
