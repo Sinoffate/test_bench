@@ -81,21 +81,43 @@ static int __init meme_start(void)
 	int err;
 	dev_t dev;
 
-	dev_major = MAJOR(dev);
-
 	// allocate chardev region and assign major number
 	err = alloc_chrdev_region(&dev, 0, MAX_DEV, "meme");
+	if (err) 
+	{
+		pr_err("Failed to allocate chardev region\n");
+		return err;
+	}
+	
+	dev_major = MAJOR(dev);
 
 	// create sysfs class
 	meme_class = class_create(THIS_MODULE, "meme");
+	if (IS_ERR(meme_class))
+	{
+		pr_err("Failed to create class\n");
+		unregister_chrdev_region(dev, MAX_DEV);
+		return PTR_ERR(meme_class);
+	}
+	
 	meme_class->dev_uevent = meme_uevent;
 
-    cdev_init(&meme_data->cdev, &meme_fops);
-    meme_data->cdev.owner = THIS_MODULE;
+    	cdev_init(&meme_data->cdev, &meme_fops);
+    	meme_data->cdev.owner = THIS_MODULE;
 
-    cdev_add(&meme_data->cdev, MKDEV(dev_major, 1), 1);
-    device_create(meme_class, NULL, MKDEV(dev_major, 1), NULL, "meme");
-    mutex_init(&meme_mutex);
+	
+
+    	err = cdev_add(&meme_data->cdev, MKDEV(dev_major, 1), 1);
+   	if (err) 
+	{
+		pr_err("Failed to add cdev\n");
+		class_destroy(meme_class);
+		unregister_chrdev_region(dev, MAX_DEV);
+		return err;
+	}
+
+    	device_create(meme_class, NULL, MKDEV(dev_major, 1), NULL, "meme");
+    	mutex_init(&meme_mutex);
 
 	return 0;
 }
@@ -104,7 +126,6 @@ static int __init meme_start(void)
 // cleanup function
 static void __exit meme_end(void)
 {
-
     mutex_destroy(&meme_mutex);
     device_destroy(meme_class, MKDEV(dev_major, 1));
 
@@ -112,34 +133,34 @@ static void __exit meme_end(void)
 	class_destroy(meme_class);
 
 	unregister_chrdev_region(MKDEV(dev_major, 0), MINORMASK);
-
-
 }
 
 static int meme_open(struct inode* inode, struct file* file)
 {
-    pr_info("Hello World!");
-    mutex_lock(&meme_mutex);
+    	pr_info("Hello World!");
+    	mutex_lock(&meme_mutex);
+	
 	return 0;
 }
 
 static int meme_release(struct inode* inode, struct file* file)
 {
-    pr_info("Device Released\n");
-    mutex_unlock(&meme_mutex);
+    	pr_info("Device Released\n");
+    	mutex_unlock(&meme_mutex);
+	
 	return 0;
 }
 
 static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
 {
 	pr_info("Device Read Called\n");
-    char* desp '';
+    if (size < sizeof(target))
+        return -EINVAL;  // Ensure the buffer is large enough
 
-    target = copy_from_user(desp, buf, size);
+    if (copy_to_user(buf, &target, sizeof(target)))
+        return -EFAULT;  // Error copying to user space
 
-
-
-	return target;
+	return sizeof(target);
 }
 
 static ssize_t meme_write(struct file* file, const char __user* buf, size_t size, loff_t* offset)
@@ -154,9 +175,10 @@ static int meme_increment(struct meme_increment_t __user *arg)
 	struct meme_increment_t increment;
 	if (copy_from_user(&increment, arg, sizeof(increment)))
 		return -EFAULT;
+	
 	target += increment.target;
+	
 	return 0;
-
 }
 
 static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
@@ -164,7 +186,8 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 	
 	long ret = -ENOIOCTLCMD;
 
-	switch (cmd) {
+	switch (cmd) 
+	{
 	    case IOCTL_MEME_INCREMENT:
 		pr_info("Meme increment ioctl called\n");
 		
