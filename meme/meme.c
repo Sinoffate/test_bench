@@ -81,19 +81,41 @@ static int __init meme_start(void)
 	int err;
 	dev_t dev;
 
-	dev_major = MAJOR(dev);
-
 	// allocate chardev region and assign major number
 	err = alloc_chrdev_region(&dev, 0, MAX_DEV, "meme");
+	if (err) 
+	{
+		pr_err("Failed to allocate chardev region\n");
+		return err;
+	}
+	
+	dev_major = MAJOR(dev);
 
 	// create sysfs class
 	meme_class = class_create(THIS_MODULE, "meme");
+	if (IS_ERR(meme_class))
+	{
+		pr_err("Failed to create class\n");
+		unregister_chrdev_region(dev, MAX_DEV);
+		return PTR_ERR(meme_class);
+	}
+	
 	meme_class->dev_uevent = meme_uevent;
 
     	cdev_init(&meme_data->cdev, &meme_fops);
     	meme_data->cdev.owner = THIS_MODULE;
 
-    	cdev_add(&meme_data->cdev, MKDEV(dev_major, 1), 1);
+	
+
+    	err = cdev_add(&meme_data->cdev, MKDEV(dev_major, 1), 1);
+   	if (err) 
+	{
+		pr_err("Failed to add cdev\n");
+		class_destroy(meme_class);
+		unregister_chrdev_region(dev, MAX_DEV);
+		return err;
+	}
+
     	device_create(meme_class, NULL, MKDEV(dev_major, 1), NULL, "meme");
     	mutex_init(&meme_mutex);
 
