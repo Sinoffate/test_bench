@@ -180,10 +180,16 @@ static ssize_t meme_write(struct file* file, const char __user* buf, size_t size
 static int meme_increment(struct meme_increment_t __user *arg)
 {
 	struct meme_increment_t increment;
-	if (copy_from_user(&increment, arg, sizeof(increment)))
-		return -EFAULT;
-	
-	target += increment.target;
+
+    pr_info("Incrementing target by: %llu\n", increment.target);
+
+
+    if (copy_from_user(&increment, arg, sizeof(increment)))
+            return -EFAULT;
+
+        target += increment.target;
+
+    pr_info("New target value: %llu\n", target);
 	
 	return 0;
 }
@@ -197,8 +203,11 @@ static long meme_ioctl(struct file* file, unsigned int cmd, unsigned long arg)
 	{
 	    case IOCTL_MEME_INCREMENT:
 		pr_info("Meme increment ioctl called\n");
-		
-		ret = meme_increment((struct meme_increment_t *) arg);
+
+        pr_info("IOCTL command received: %u\n", cmd);
+
+
+        ret = meme_increment((struct meme_increment_t *) arg);
 		
         break;
 
