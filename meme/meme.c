@@ -154,11 +154,18 @@ static int meme_release(struct inode* inode, struct file* file)
 static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
 {
 	pr_info("Device Read Called\n");
+
+    if (*offset >= sizeof(target))
+        return 0;  // End of file
+
     if (size < sizeof(target))
         return -EINVAL;  // Ensure the buffer is large enough
 
     if (copy_to_user(buf, &target, sizeof(target)))
         return -EFAULT;  // Error copying to user space
+
+    // Update the offset to indicate we've read the data
+    *offset += sizeof(target);
 
 	return sizeof(target);
 }
