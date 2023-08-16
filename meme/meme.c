@@ -181,13 +181,12 @@ static int meme_increment(struct meme_increment_t __user *arg)
 {
 	struct meme_increment_t increment;
 
-    pr_info("Incrementing target by: %llu\n", increment.target);
-
-
     if (copy_from_user(&increment, arg, sizeof(increment)))
             return -EFAULT;
 
-        target += increment.target;
+    pr_info("Incrementing target by: %llu\n", increment.target);
+
+    target += increment.target;
 
     pr_info("New target value: %llu\n", target);
 	
