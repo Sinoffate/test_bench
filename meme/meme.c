@@ -102,12 +102,10 @@ static int __init meme_start(void)
 	
 	meme_class->dev_uevent = meme_uevent;
 
-    	cdev_init(&meme_data->cdev, &meme_fops);
-    	meme_data->cdev.owner = THIS_MODULE;
+    cdev_init(&meme_data->cdev, &meme_fops);
+    meme_data->cdev.owner = THIS_MODULE;
 
-	
-
-    	err = cdev_add(&meme_data->cdev, MKDEV(dev_major, 1), 1);
+    err = cdev_add(&meme_data->cdev, MKDEV(dev_major, 1), 1);
    	if (err) 
 	{
 		pr_err("Failed to add cdev\n");
@@ -115,9 +113,8 @@ static int __init meme_start(void)
 		unregister_chrdev_region(dev, MAX_DEV);
 		return err;
 	}
-
-    	device_create(meme_class, NULL, MKDEV(dev_major, 1), NULL, "meme");
-    	mutex_init(&meme_mutex);
+    device_create(meme_class, NULL, MKDEV(dev_major, 1), NULL, "meme");
+    mutex_init(&meme_mutex);
 
 	return 0;
 }
@@ -137,16 +134,16 @@ static void __exit meme_end(void)
 
 static int meme_open(struct inode* inode, struct file* file)
 {
-    	pr_info("Hello World!");
-    	mutex_lock(&meme_mutex);
+    pr_info("Hello world!");
+    mutex_lock(&meme_mutex);
 	
 	return 0;
 }
 
 static int meme_release(struct inode* inode, struct file* file)
 {
-    	pr_info("Device Released\n");
-    	mutex_unlock(&meme_mutex);
+    pr_info("Device Released\n");
+    mutex_unlock(&meme_mutex);
 	
 	return 0;
 }
@@ -155,14 +152,23 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_
 {
 	pr_info("Device Read Called\n");
 
+    // Check if we've finished reading the data
     if (*offset >= sizeof(target))
-        return 0;  // End of file
+    {
+        return 0;
+    }
 
+    // Ensure the buffer is large enough
     if (size < sizeof(target))
-        return -EINVAL;  // Ensure the buffer is large enough
+    {
+        return -EINVAL;
+    }
 
+    // Copy the data to the user
     if (copy_to_user(buf, &target, sizeof(target)))
+    {
         return -EFAULT;  // Error copying to user space
+    }
 
     // Update the offset to indicate we've read the data
     *offset += sizeof(target);
@@ -181,8 +187,12 @@ static int meme_increment(struct meme_increment_t __user *arg)
 {
 	struct meme_increment_t increment;
 
+    // Copy the data from the user
     if (copy_from_user(&increment, arg, sizeof(increment)))
-            return -EFAULT;
+    {
+        return -EFAULT; // Error copying from user space
+    }
+
 
     pr_info("Incrementing target by: %llu\n", increment.target);
 
