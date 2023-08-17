@@ -148,7 +148,7 @@ static int meme_release(struct inode* inode, struct file* file)
 	return 0;
 }
 
-static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
+static char* meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
 {
 	pr_info("Device Read Called\n");
 
