@@ -150,10 +150,8 @@ static int meme_release(struct inode* inode, struct file* file)
 
 static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
 {
-    char hello_world[] = "Hello world!";
-    size_t len = sizeof(hello_world) - 1;
+	pr_info("Device Read Called\n");
 
-    pr_info("Device Read Called\n");
 
     // Check if we've finished reading the data
     if (*offset >= sizeof(target))
@@ -176,7 +174,7 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_
     // Update the offset to indicate we've read the data
     *offset += sizeof(target);
 
-	return len;
+	return sizeof(target);
 }
 
 static ssize_t meme_write(struct file* file, const char __user* buf, size_t size, loff_t* offset)
