@@ -200,6 +200,12 @@ static int meme_increment(struct meme_increment_t __user *arg)
     target += increment.target;
 
     pr_info("New target value: %llu\n", target);
+
+    // copy new target value to user
+    if (copy_to_user(arg, &target, sizeof(target)))
+    {
+        return -EFAULT;  // Error copying to user space
+    }
 	
 	return 0;
 }
