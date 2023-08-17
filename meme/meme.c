@@ -151,7 +151,7 @@ static int meme_release(struct inode* inode, struct file* file)
 static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_t* offset)
 {
 	pr_info("Device Read Called\n");
-    static const char hello_world[] = "Hello world!";
+    char hello_world[] = "Hello world!";
     size_t len = sizeof(hello_world) - 1;
 
     // Check if we've finished reading the data
