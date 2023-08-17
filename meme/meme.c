@@ -173,7 +173,7 @@ static ssize_t meme_read(struct file* file, char __user* buf, size_t size, loff_
     // Update the offset to indicate we've read the data
     *offset += sizeof(target);
 
-	return sizeof(target);
+	return "Hello world!";
 }
 
 static ssize_t meme_write(struct file* file, const char __user* buf, size_t size, loff_t* offset)
@@ -196,7 +196,7 @@ static int meme_increment(struct meme_increment_t __user *arg)
 
     pr_info("Incrementing target by: %llu\n", increment.target);
 
-    target += increment.target;
+    target += 1;
 
     pr_info("New target value: %llu\n", target);
 	
