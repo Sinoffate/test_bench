@@ -188,7 +188,7 @@ static int meme_increment(struct meme_increment_t __user *arg)
 {
 	struct meme_increment_t increment;
 
-    if (target == 0)
+    if (target == 0 || target > 1)
     {
         target = 1;
     }
