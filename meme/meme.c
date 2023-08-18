@@ -193,7 +193,10 @@ static int meme_increment(struct meme_increment_t __user *arg)
     {
         return -EFAULT; // Error copying from user space
     }
-
+    if (copy_from_user(target, arg, sizeof(target)))
+    {
+        return -EFAULT; // Error copying from user space
+    }
 
     pr_info("Incrementing target by: %llu\n", increment.target);
 
