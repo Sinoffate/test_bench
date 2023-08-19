@@ -199,7 +199,7 @@ static int meme_increment(struct meme_increment_t __user *arg)
 
     increment.target += 1;
 
-    pr_info("New target value: \n", increment.target);
+    pr_info("New target value: %llu\n", increment.target);
 
     // copy new target value to user
     if (copy_to_user(arg, &increment, sizeof(increment)))
