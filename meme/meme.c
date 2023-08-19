@@ -188,11 +188,6 @@ static int meme_increment(struct meme_increment_t __user *arg)
 {
 	struct meme_increment_t increment;
 
-    if (target == 0 || target > 1)
-    {
-        target = 1;
-    }
-
     // Copy the data from the user
     if (copy_from_user(&increment, arg, sizeof(increment)))
     {
@@ -202,12 +197,12 @@ static int meme_increment(struct meme_increment_t __user *arg)
 
     pr_info("Incrementing target by: %llu\n", increment.target);
 
-    target += increment.target;
+    increment.target++;
 
     pr_info("New target value: %llu\n", target);
 
     // copy new target value to user
-    if (copy_to_user(arg, &target, sizeof(target)))
+    if (copy_to_user(arg, &increment, sizeof(increment)))
     {
         return -EFAULT;  // Error copying to user space
     }
