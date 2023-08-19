@@ -195,7 +195,7 @@ static int meme_increment(struct meme_increment_t __user *arg)
     }
 
 
-    pr_info("Current target value: %d\n", increment.target);
+    pr_info("Current target value: %llu\n", increment.target);
 
     increment.target += 1;
 
